@@ -94,6 +94,14 @@ input[type=submit], a.button {
     float: left;
 }
 
+.helptext {
+    margin-bottom: 20px;
+    color: #aaa;
+    clear: both;
+    float: left;
+    font-size: 13px;
+}
+
 header ul.menu {
     list-style: none;
     float: left;
