@@ -22,10 +22,16 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account.urls')),
+    path('images/', include('images.urls', namespace='images')),
     path('social-auth/', include('social_django.urls', namespace='social')),
 ]
 
 if settings.DEBUG:
+    import mimetypes
+
+    mimetypes.add_type('application/javascript', '.js', True)
+    mimetypes.add_type('text/css', '.css', True)
+
     urlpatterns += static(
-        settings.MEDIA_URL, document_roon=settings.MEDIA_ROOT
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
     )
