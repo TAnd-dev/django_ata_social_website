@@ -2,6 +2,7 @@
 {% block title %}Images bookmarked{% endblock %}
 
 {% block content %}
+<p>You can see the <a href="{% url 'images:ranking' %}">most viewed images</a></p>
 <h1>Images bookmarked</h1>
 <div id="image-list">
     {% include "images/image/list_image.html" %}

@@ -7,6 +7,8 @@ from django.views.decorators.http import require_POST
 
 from account.forms import LoginForm, RegistrationForm, UserEditForm, ProfileEditForm
 from account.models import Contact
+from actions.models import Action
+from actions.utils import create_action
 
 User = get_user_model()
 
@@ -41,6 +43,7 @@ def register(request):
             new_user = form.save(commit=False)
             new_user.set_password(form.cleaned_data['password'])
             new_user.save()
+            create_action(new_user, 'has created an account')
             return render(request, 'account/register_done.html', {'new_user': new_user})
     else:
         form = RegistrationForm()
@@ -49,7 +52,18 @@ def register(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+    actions = Action.objects.exclude(user=request.user)
+    following_ids = request.user.following.values_list('id', flat=True)
+
+    if following_ids:
+        actions = actions.filter(
+            user_id__in=following_ids
+        ).select_related(
+            'user', 'user__profile'
+        ).prefetch_related(
+            'target'
+        )[:10]
+    return render(request, 'account/dashboard.html', {'section': 'dashboard', 'actions': actions})
 
 
 @login_required
@@ -91,6 +105,7 @@ def user_follow(request, username):
             user = User.objects.get(username=username)
             if action == 'follow':
                 Contact.objects.get_or_create(user_from=request.user, user_to=user)
+                create_action(request.user, 'is following', user)
             else:
                 Contact.objects.filter(user_from=request.user, user_to=user).delete()
             return JsonResponse({'status': 'ok'})

@@ -339,3 +339,19 @@ img.user-detail {
 .image-container {
     margin-top: 40px;
 }
+
+
+.action {
+    clear: both;
+    overflow: auto;
+}
+
+.action .images {
+    float: left;
+    margin: 0 10px 10px 0;
+}
+
+.action .date{
+    font-style: italic;
+    color: #ccc;
+}
